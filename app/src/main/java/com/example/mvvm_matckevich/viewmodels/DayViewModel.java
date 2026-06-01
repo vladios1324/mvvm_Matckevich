@@ -26,15 +26,15 @@ public class DayViewModel  extends ViewModel {
     MutableLiveData<String> _condition = new MutableLiveData<>();
     public LiveData<String> condition = _condition;
 
-
-    public void loadWeatherForLocation(double lat, double lon) {
-        new WeatherApi(lat, lon, ResponseWeather).execute();
-    }
-
-    public DayViewModel() {
-        WeatherApi weatherApi = new WeatherApi(58,56, ResponseWeather);
+    public void updateLocation(double lat, double lon) {
+        WeatherApi weatherApi = new WeatherApi(lat, lon, ResponseWeather);
         weatherApi.execute();
     }
+
+//    public DayViewModel() {
+//        WeatherApi weatherApi = new WeatherApi(58,56, ResponseWeather);
+//        weatherApi.execute();
+//    }
 
     MyResponseCallback ResponseWeather = new MyResponseCallback() {
         @Override

@@ -31,9 +31,7 @@ public class MainActivity extends AppCompatActivity {
     DayViewModel viewModel;
 
     DayAdapter adapter;
-
     LocationManager locationManager;
-    private boolean isLocationUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,57 @@ public class MainActivity extends AppCompatActivity {
         binding.setLifecycleOwner(this);
         setupRecyclerView();
 
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        checkLocationPermission();
+    }
 
+    private void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
+            startLocationUpdates();
+        }
+    }
+
+    private void startLocationUpdates() {
+        try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    1000, 10, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    1000, 10, locationListener);
+
+            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastLocation == null) {
+                lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if (lastLocation != null) {
+                viewModel.updateLocation(lastLocation.getLatitude(), lastLocation.getLongitude());
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            if (location != null) {
+                viewModel.updateLocation(location.getLatitude(), location.getLongitude());
+            }
+        }
+    };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startLocationUpdates();
+        } else {
+            Toast.makeText(this, "Разрешение на геолокацию не получено", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setupRecyclerView() {
