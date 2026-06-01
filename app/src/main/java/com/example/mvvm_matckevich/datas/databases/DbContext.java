@@ -14,12 +14,12 @@ public class DbContext extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        sqLiteDatabase.execSQL(
+        db.execSQL(
                 "CREATE TABLE Days (" +
                         "Id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "Name TEXT NOT NULL, " +
                         "Temp INTEGER NOT NULL, " +
-                        "Codition TEXT NOT NULL);"
+                        "Condition  TEXT NOT NULL);"
         );
     }
 

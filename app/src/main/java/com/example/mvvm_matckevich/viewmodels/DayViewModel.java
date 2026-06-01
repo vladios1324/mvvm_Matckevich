@@ -1,5 +1,8 @@
 package com.example.mvvm_matckevich.viewmodels;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -7,7 +10,9 @@ import androidx.lifecycle.ViewModel;
 import com.example.mvvm_matckevich.datas.apis.WeatherApi;
 import com.example.mvvm_matckevich.datas.apis.WeatherResponse;
 import com.example.mvvm_matckevich.datas.callbacks.MyResponseCallback;
+import com.example.mvvm_matckevich.datas.databases.WeatherContext;
 import com.example.mvvm_matckevich.domains.models.Day;
+import com.example.mvvm_matckevich.presentations.utils.DataNotifier;
 import com.google.gson.GsonBuilder;
 
 import java.time.LocalDate;
@@ -31,10 +36,24 @@ public class DayViewModel  extends ViewModel {
         weatherApi.execute();
     }
 
-//    public DayViewModel() {
-//        WeatherApi weatherApi = new WeatherApi(58,56, ResponseWeather);
-//        weatherApi.execute();
-//    }
+    public DayViewModel() {
+        loadDays();
+        DataNotifier.getInstance().subscribe(this::loadDays);
+    }
+
+    public void loadDays() {
+        new Thread(() -> {
+            List<Day> days = WeatherContext.allDays();
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+               _days.setValue(days);
+               if(days.isEmpty() == false) {
+                   _nowTemp.setValue(days.get(0).Temp + "°");
+                   _condition.setValue(days.get(0).Condition);
+               }
+            });
+        }).start();
+    }
 
     MyResponseCallback ResponseWeather = new MyResponseCallback() {
         @Override

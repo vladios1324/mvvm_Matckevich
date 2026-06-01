@@ -17,12 +17,20 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.mvvm_matckevich.R;
 import com.example.mvvm_matckevich.databinding.ActivityMainBinding;
+import com.example.mvvm_matckevich.datas.databases.DbContext;
+import com.example.mvvm_matckevich.datas.databases.WeatherContext;
+import com.example.mvvm_matckevich.datas.workers.WeatherWorker;
 import com.example.mvvm_matckevich.viewmodels.DayViewModel;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,10 +40,20 @@ public class MainActivity extends AppCompatActivity {
 
     DayAdapter adapter;
     LocationManager locationManager;
+    DbContext _context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        _context = new DbContext(this);
+        if(WeatherContext.allDays().isEmpty()) {
+            onStartWorkerNow();
+        }
+
+        onStartWorker();
+
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(DayViewModel.class);
         binding.setViewModel(viewModel);
@@ -44,6 +62,24 @@ public class MainActivity extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         checkLocationPermission();
+    }
+
+    public void onStartWorker() {
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+                WeatherWorker.class,
+                15, TimeUnit.MINUTES,
+                30, TimeUnit.SECONDS)
+                .build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "WORKER_MANAGER",
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+        );
+    }
+    public void onStartWorkerNow() {
+        OneTimeWorkRequest immediateWork = new OneTimeWorkRequest.Builder(WeatherWorker.class)
+                .build();
+        WorkManager.getInstance(this).enqueue(immediateWork);
     }
 
     private void checkLocationPermission() {
