@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.mvvm_oshchepkov.viewmodels.DayViewModel" />
+            type="com.example.mvvm_matckevich.viewmodels.DayViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,14 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_main"
-        tools:context=".MainActivity">
+        tools:context=".presentations.MainActivity">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="150dp"
-            android:fontFamily="@font/roboto_light"
+            android:fontFamily="@font/roboto"
             android:text="@{viewModel.nowTemp}"
             android:textColor="@color/white"
             android:textSize="100sp"
@@ -34,7 +34,7 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_light"
+            android:fontFamily="@font/roboto"
             android:text="@{viewModel.condition}"
             android:textColor="@color/white"
             android:textSize="25sp"

@@ -26,7 +26,7 @@ public class WeatherApi extends AsyncTask<Void, Void, String> {
                     .ignoreContentType(true)
                     .ignoreHttpErrors(true)
                     .method(Connection.Method.GET)
-                    .header("X-Yandex-Weather-Key", "demo_yandex_weather_api_key_ca6d09349ba0")
+                    .header("X-Yandex-Weather-Key", "4bc68266-732f-4fb0-9188-8be5ab8d50bc")
                     .execute();
 
             return response.statusCode() == 200 ? response.body() : "Error: " + response.body();

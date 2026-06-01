@@ -25,6 +25,12 @@ public class DayViewModel  extends ViewModel {
     public LiveData<String> nowTemp = _nowTemp;
     MutableLiveData<String> _condition = new MutableLiveData<>();
     public LiveData<String> condition = _condition;
+
+
+    public void loadWeatherForLocation(double lat, double lon) {
+        new WeatherApi(lat, lon, ResponseWeather).execute();
+    }
+
     public DayViewModel() {
         WeatherApi weatherApi = new WeatherApi(58,56, ResponseWeather);
         weatherApi.execute();
