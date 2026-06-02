@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         checkLocationPermission();
     }
 
-    public void onStartWorker() {
+    public void onStartWorker() {a
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
                 WeatherWorker.class,
                 15, TimeUnit.MINUTES,
