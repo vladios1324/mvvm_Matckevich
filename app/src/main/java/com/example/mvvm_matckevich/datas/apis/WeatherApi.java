@@ -27,11 +27,15 @@ public class WeatherApi extends AsyncTask<Void, Void, String> {
                     .ignoreHttpErrors(true)
                     .method(Connection.Method.GET)
                     .header("X-Yandex-Weather-Key", "4bc68266-732f-4fb0-9188-8be5ab8d50bc")
+
                     .execute();
+
+
 
             return response.statusCode() == 200 ? response.body() : "Error: " + response.body();
         }
         catch (IOException e) {
+            Log.e("WeatherApi", "IO Error: " + e.getMessage());
             return "Error: " + e.getMessage();
         }
     }

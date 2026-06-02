@@ -12,6 +12,7 @@ import com.example.mvvm_matckevich.datas.apis.WeatherResponse;
 import com.example.mvvm_matckevich.datas.callbacks.MyResponseCallback;
 import com.example.mvvm_matckevich.datas.databases.WeatherContext;
 import com.example.mvvm_matckevich.domains.models.Day;
+import com.example.mvvm_matckevich.presentations.MainActivity;
 import com.example.mvvm_matckevich.presentations.utils.DataNotifier;
 import com.google.gson.GsonBuilder;
 
@@ -39,7 +40,12 @@ public class WeatherWorker extends Worker {
     public Result doWork() {
         Log.d(TAG, "Выполнение запроса получения погоды");
         try {
-            WeatherApi weatherApi = new WeatherApi( 58, 56, ResponseWeather);
+            double lat = MainActivity.lastLat;
+            double lon = MainActivity.lastLon;
+
+            Log.d(TAG, "Координаты: " + lat + ", " + lon);
+
+            WeatherApi weatherApi = new WeatherApi( lat, lon, ResponseWeather);
             weatherApi.execute();
             boolean completed = _latch.await( 30, TimeUnit.SECONDS);
             if(!completed) {

@@ -41,17 +41,19 @@ public class MainActivity extends AppCompatActivity {
     DayAdapter adapter;
     LocationManager locationManager;
     DbContext _context;
+    public static double lastLat = 58.0;
+    public static double lastLon = 56.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         _context = new DbContext(this);
+        onStartWorker();
+
         if(WeatherContext.allDays().isEmpty()) {
             onStartWorkerNow();
-        }
-
-        onStartWorker();
+       }
 
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -114,8 +116,10 @@ public class MainActivity extends AppCompatActivity {
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
+            lastLat = location.getLatitude();
+            lastLon = location.getLongitude();
             if (location != null) {
-                viewModel.updateLocation(location.getLatitude(), location.getLongitude());
+                viewModel.updateLocation(lastLat, lastLon);
             }
         }
     };
